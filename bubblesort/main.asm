@@ -55,7 +55,9 @@
   CONFIG  EBTRB = OFF           ; Boot Block Table Read Protection bit (Boot Block (000000-0001FFh) not protected from Table Reads executed in other blocks)
 
     
-sTemp1 equ 0x8B		;
+sTemp1 equ 0X90
+sTemp2 equ 0X91
+
  
     ORG 0x00
 
@@ -63,13 +65,7 @@ sTemp1 equ 0x8B		;
  
 
 INIT  
-    MOVLW .12		;MOVE O Valor 12 PARA O REG DE TRABALHO
-    MOVWF 0x80		;MOVE O Valor do REG DE TRABALHO para o ENDERECO 0X80
-    MOVLW .1		;MOVE O Valor 1 PARA O REG DE TRABALHO
-    MOVWF 0x81		;MOVE O Valor do REG DE TRABALHO para o ENDERECO 0X81
-    MOVLW .45		;MOVE O Valor 45 PARA O REG DE TRABALHO
-    MOVWF 0x82		;MOVE O Valor do REG DE TRABALHO para o ENDERECO 0X81
-
+    
     MOVLW 0x80		;MOVE O Valor de 0x80 para o REG DE TRABALHO 
     MOVWF FSR0L		;MOVE O Valor do REG DE TRABALHO para a REG que armazena o Ponteiro
 			;Ao executar esse comando ele manda o valor de 0x80 para o REG INDF0
@@ -81,10 +77,10 @@ RUN
     MOVF INDF0,W	;MOVE o Valor de INFD0 para o REG DE TRABALHO
     SUBWF sTemp1,W	;SUBTRAI O Valor da Variavel sTemp1 do REG DE TRABALHO e salva no  REG DE TRABALHO
     
-    BTFSC STATUS,Z	;Testa o BIT do OperaÁ„o de SUBTRA«√O anterior e SE for = 0 pula a proxima linha 
-    GOTO TEST_LARGER	;Vai para a funÁ„o TEST_LARGER
+    BTFSC STATUS,Z	;Testa o BIT do Opera√ß√£o de SUBTRA√á√ÉO anterior e SE for = 0 pula a proxima linha 
+    GOTO TEST_LARGER	;Vai para a fun√ß√£o TEST_LARGER
 
-    BTFSS STATUS,C	;Testa o BIT do OperaÁ„o de SUBTRA«√O anterior e SE for = 1 pula a proxima linha 
+    BTFSS STATUS,C	;Testa o BIT do Opera√ß√£o de SUBTRA√á√ÉO anterior e SE for = 1 pula a proxima linha 
     GOTO TEST_LARGER
    
     GOTO CHANGE
@@ -95,14 +91,13 @@ TEST_LARGER
     GOTO RUN
 
 CHANGE
-    MOVF INDF0,W
-    ;MOVWF sTemp2
-    MOVF sTemp1,W
-    MOVWF INDF0
+    MOVF INDF0,W ;Menor no W
+    MOVFF sTemp1,INDF0
     DECF FSR0L,F
-    ;MOVF sTemp2,W
-    MOVWF INDF0,W
+    MOVWF INDF0
+    INCF FSR0L,F
     
-    GOTO RUN
+    GOTO INIT
+    
 
     END    
