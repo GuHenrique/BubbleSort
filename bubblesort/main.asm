@@ -56,8 +56,8 @@
 
     
 sTemp1 equ 0X90
-sTemp2 equ 0X91
-
+valid equ 0X91
+runTime equ 0x92
  
     ORG 0x00
 
@@ -65,7 +65,8 @@ sTemp2 equ 0X91
  
 
 INIT  
-    
+    MOVLW .10
+    MOVWF valid
     MOVLW 0x80		;MOVE O Valor de 0x80 para o REG DE TRABALHO 
     MOVWF FSR0L		;MOVE O Valor do REG DE TRABALHO para a REG que armazena o Ponteiro
 			;Ao executar esse comando ele manda o valor de 0x80 para o REG INDF0
@@ -97,7 +98,14 @@ CHANGE
     MOVWF INDF0
     INCF FSR0L,F
     
+    GOTO VALIDATION
+    
+VALIDATION
+    DECF valid,F
+    
+    BTFSC STATUS,N
+    END 
+    
     GOTO INIT
     
-
-    END    
+    
